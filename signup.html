@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up - Urban Living Real Estate</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #0077cc;
+    }
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 15px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0077cc;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    p.message {
+      color: red;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .login-link a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Account</h2>
+    <p class="message" id="message"></p>
+    <form id="signupForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const message = document.getElementById('message');
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users') || '[]');
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    signupForm.addEventListener('submit', e => {
+      e.preventDefault();
+      message.textContent = '';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        message.textContent = "Passwords don't match.";
+        return;
+      }
+      if (username.length < 3 || password.length < 6) {
+        message.textContent = "Username must be at least 3 characters and password at least 6.";
+        return;
+      }
+
+      let users = getUsers();
+      if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        message.textContent = "Username already taken.";
+        return;
+      }
+
+      users.push({ username, password });
+      saveUsers(users);
+      alert('Account created! You can now login.');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Urban Living Real Estate</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #f4f7f8;
+      color: #333;
+    }
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+    nav a, nav span {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav span {
+      margin-left: 0;
+      font-weight: 700;
+      font-style: italic;
+    }
+    nav a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .controls > * {
+      flex: 1 1 150px;
+      min-width: 150px;
+    }
+    input[type="text"], select {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+    .properties {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .property-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+    .property-card:hover {
+      transform: scale(1.03);
+    }
+    .property-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .property-details {
+      padding: 15px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .property-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+    }
+    .property-location {
+      color: #777;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .property-price {
+      color: #0077cc;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .property-type {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #e6f0ff;
+      color: #004a99;
+      width: fit-content;
+      margin-bottom: 10px;
+    }
+    .btn-contact {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      margin-top: auto;
+    }
+    .btn-contact:hover {
+      background-color: #005fa3;
+    }
+    .favorite-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+      transition: color 0.2s ease;
+    }
+    .favorite-btn.favorited {
+      color: #e74c3c;
+      text-shadow: 0 0 5px #e74c3c;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+    /* Modal */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 999; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.4); 
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 80px auto; 
+      padding: 20px;
+      border: 1px solid #888;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+    .close {
+      color: #aaa;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+    }
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button.submit-contact {
+      margin-top: 15px;
+      background-color: #0077cc;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button.submit-contact:hover {
+      background-color: #005fa3;
+    }
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      nav a, nav span {
+        margin-left: 0;
+      }
+      .controls {
+        flex-direction: column;
+      }
+      .controls > * {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="homeBtn">Urban Living Real Estate</h1>
+    <nav id="navLinks">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search by title or location..." />
+      <select id="typeFilter">
+        <option value="all">All Types</option>
+        <option value="apartment">Apartment</option>
+        <option value="house">House</option>
+        <option value="studio">Studio</option>
+      </select>
+      <select id="sortPrice">
+        <option value="none">Sort by Price</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+    </div>
+
+    <div class="properties" id="propertyList">
+      <!-- Property cards inserted here -->
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Urban Living Real Estate
+  </footer>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="modalClose">&times;</span>
+      <h2>Contact Agent</h2>
+      <form id="contactForm">
+        <input type="hidden" id="contactPropertyId" />
+        <label for="contactName">Your Name</label>
+        <input type="text" id="contactName" required />
+        <label for="contactEmail">Your Email</label>
+        <input type="email" id="contactEmail" required />
+        <label for="contactMessage">Message</label>
+        <textarea id="contactMessage" required></textarea>
+        <button type="submit" class="submit-contact">Send Inquiry</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Auth & Nav
+    const navLinks = document.getElementById('navLinks');
+
+    function checkLogin() {
+      const user = localStorage.getItem('loggedInUser');
+      if (user) {
+        navLinks.innerHTML = `
+          <span>Welcome, ${user}</span>
+          <a href="#" id="logoutBtn">Logout</a>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', e => {
+          e.preventDefault();
+          localStorage.removeItem('loggedInUser');
+          window.location.href = 'login.html';
+        });
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+
+    checkLogin();
+
+    // Properties Data
+    const properties = [
+      {
+        id: 1,
+        title: 'Modern Apartment in Downtown',
+        location: 'New York, NY',
+        price: 1200,
+        priceDisplay: '$1,200 / month',
+        type: 'apartment',
+        image: 'https://images.unsplash.com/photo-1560448071-9b8e94d76a33?auto=format&fit=crop&w=800&q=80',
+        description: 'A beautiful modern apartment in the heart of downtown New York, close to all amenities.'
+      },
+      {
+        id: 2,
+        title: 'Cozy Suburban House',
+        location: 'San Francisco, CA',
+        price: 2500,
+        priceDisplay: '$2,500 / month',
+        type: 'house',
+        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80',
+        description: 'A spacious and cozy house in a quiet suburban neighborhood, perfect for families.'
+      },
+      {
+        id: 3,
+        title: 'Chic Studio Loft',
+        location: 'Chicago, IL',
+        price: 900,
+        priceDisplay: '$900 / month',
+        type: 'studio',
+        image: 'https://images.unsplash.com/photo-1501183638714-35d36c27a54f?auto=format&fit=crop&w=800&q=80',
+        description: 'A stylish studio loft ideal for singles or young professionals.'
+      },
+      {
+        id: 4,
+        title: 'Luxury Apartment with City View',
+        location: 'Los Angeles, CA',
+        price: 3000,
+        priceDisplay: '$3,000 / month',
+        type: 'apartment',
+        image: 'https://images.unsplash.com/photo-1600585153982-147f2621b12f?auto=format&fit=crop&w=800&q=80',
+        description: 'Luxury apartment featuring stunning city views and premium amenities.'
+      },
+      {
+        id: 5,
+        title: 'Family House with Garden',
+        location: 'Seattle, WA',
+        price: 2100,
+        priceDisplay: '$2,100 / month',
+        type: 'house',
+        image: 'https://images.unsplash.com/photo-1505692794403-9c2f63a0c72b?auto=format&fit=crop&w=800&q=80',
+        description: 'Beautiful family house with a large garden and plenty of outdoor space.'
+      }
+    ];
+
+    // DOM Elements
+    const propertyList = document.getElementById('propertyList');
+    const typeFilter = document.getElementById('typeFilter');
+    const searchInput = document.getElementById('searchInput');
+    const sortPrice = document.getElementById('sortPrice');
+    const homeBtn = document.getElementById('homeBtn');
+
+    // Contact Modal Elements
+    const contactModal = document.getElementById('contactModal');
+    const modalClose = document.getElementById('modalClose');
+    const contactForm = document.getElementById('contactForm');
+    const contactPropertyId = document.getElementById('contactPropertyId');
+    const contactName = document.getElementById('contactName');
+    const contactEmail = document.getElementById('contactEmail');
+    const contactMessage = document.getElementById('contactMessage');
+
+    // Favorite Properties (IDs)
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    // Utility Functions
+    function saveFavorites() {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+
+    function isFavorited(id) {
+      return favorites.includes(id);
+    }
+
+    // Filter, Search & Sort
+    function filterProperties() {
+      const type = typeFilter.value;
+      const searchTerm = searchInput.value.toLowerCase();
+
+      let filtered = properties.filter(p => {
+        const matchesType = type === 'all' || p.type === type;
+        const matchesSearch = p.title.toLowerCase().includes(searchTerm) || p.location.toLowerCase().includes(searchTerm);
+        return matchesType && matchesSearch;
+      });
+
+      // Sorting
+      if (sortPrice.value === 'asc') {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortPrice.value === 'desc') {
+        filtered.sort((a, b) => b.price - a.price);
+      }
+
+      return filtered;
+    }
+
+    // Render Properties
+    function displayProperties() {
+      const filtered = filterProperties();
+      propertyList.innerHTML = '';
+
+      if (filtered.length === 0) {
+        propertyList.innerHTML = '<p>No properties found.</p>';
+        return;
+      }
+
+      filtered.forEach(property => {
+        const card = document.createElement('div');
+        card.className = 'property-card';
+
+        card.innerHTML = `
+          <button class="favorite-btn ${isFavorited(property.id) ? 'favorited' : ''}" aria-label="Add to favorites">&#10084;</button>
+          <img src="${property.image}" alt="${property.title}" class="property-image" />
+          <div class="property-details">
+            <div class="property-type">${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</div>
+            <h3 class="property-title">${property.title}</h3>
+            <div class="property-location">${property.location}</div>
+            <div class="property-price">${property.priceDisplay}</div>
+            <button class="btn-contact">Contact Agent</button>
+          </div>
+        `;
+
+        // Favorite toggle
+        const favBtn = card.querySelector('.favorite-btn');
+        favBtn.addEventListener('click', () => {
+          if (isFavorited(property.id)) {
+            favorites = favorites.filter(favId => favId !== property.id);
+            favBtn.classList.remove('favorited');
+          } else {
+            favorites.push(property.id);
+            favBtn.classList.add('favorited');
+          }
+          saveFavorites();
+        });
+
+        // Contact button event
+        const contactBtn = card.querySelector('.btn-contact');
+        contactBtn.addEventListener('click', () => {
+          openContactModal(property.id);
+        });
+
+        // Click image or title to open details page
+        const openDetails = () => {
+          localStorage.setItem('selectedProperty', JSON.stringify(property));
+          window.location.href = 'property-details.html';
+        };
+        card.querySelector('.property-image').addEventListener('click', openDetails);
+        card.querySelector('.property-title').addEventListener('click', openDetails);
+
+        propertyList.appendChild(card);
+      });
+    }
+
+    // Contact Modal Functions
+    function openContactModal(propertyId) {
+      contactPropertyId.value = propertyId;
+      contactName.value = '';
+      contactEmail.value = '';
+      contactMessage.value = '';
+      contactModal.style.display = 'block';
+    }
+    function closeContactModal() {
+      contactModal.style.display = 'none';
+    }
+
+    modalClose.addEventListener('click', closeContactModal);
+    window.addEventListener('click', e => {
+      if (e.target === contactModal) {
+        closeContactModal();
+      }
+    });
+
+    contactForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const propertyId = contactPropertyId.value;
+      const name = contactName.value.trim();
+      const email = contactEmail.value.trim();
+      const message = contactMessage.value.trim();
+
+      alert(`Inquiry sent!\n\nProperty ID: ${propertyId}\nName: ${name}\nEmail: ${email}\nMessage: ${message}`);
+
+      closeContactModal();
+    });
+
+    // Event Listeners
+    typeFilter.addEventListener('change', displayProperties);
+    searchInput.addEventListener('input', displayProperties);
+    sortPrice.addEventListener('change', displayProperties);
+
+    homeBtn.addEventListener('click', () => {
+      // Reset filters & search
+      searchInput.value = '';
+      typeFilter.value = 'all';
+      sortPrice.value = 'none';
+      displayProperties();
+    });
+
+    // Initial render
+    displayProperties();
+  </script>
+</body>
+</html>
