@@ -1,2 +1,1 @@
-# Project
-ok
+Simple first project of mine...
